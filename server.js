@@ -30,10 +30,8 @@ app.use(cookieParser());
 app.use(cors());
 
 // Define Routes
-// app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/profile", require("./routes/profile"));
-// app.use("/api/posts", require("./routes/api/posts"));
 
 const PORT = process.env.PORT || 5000;
 
