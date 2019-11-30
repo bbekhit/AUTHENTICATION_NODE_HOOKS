@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { signupUser } from "../../actions/authActions";
 import { removeAlert } from "../../actions/alertActions";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
-const Signup = ({ signupUser, removeAlert, history }) => {
+const Signup = ({
+  signupUser,
+  removeAlert,
+  history,
+  auth: { isAuthenticated }
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,6 +36,9 @@ const Signup = ({ signupUser, removeAlert, history }) => {
       history.push("/");
     }
   };
+  if (isAuthenticated) {
+    return <Redirect to="/" />;
+  }
   return (
     <div className="container">
       <div className="m-3">
@@ -74,4 +83,8 @@ const Signup = ({ signupUser, removeAlert, history }) => {
   );
 };
 
-export default connect(null, { signupUser, removeAlert })(Signup);
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, { signupUser, removeAlert })(Signup);

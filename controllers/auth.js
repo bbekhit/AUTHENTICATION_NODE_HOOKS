@@ -20,7 +20,7 @@ exports.signupUser = async (req, res) => {
     if (user) {
       return res.status(400).json({ error: "User already exists" });
     }
-    user = new User(req.body);
+    user = new Use(req.body);
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     await user.save();
@@ -31,7 +31,8 @@ exports.signupUser = async (req, res) => {
     return res.json({ token });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Server error");
+    // res.status(500).send("Server error");
+    res.status(400).json({ error: "Server error" });
   }
 };
 
@@ -51,6 +52,42 @@ exports.signinUser = async (req, res) => {
     res.cookie("t", token, { expire: new Date() + 9999 });
     // retrun response with user and token to frontend client
     return res.json({ token });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.socialLogin = async (req, res) => {
+  const { email } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User(req.body);
+      await user.save();
+      // generate a token with user id and secret
+      const token = jwt.sign(
+        { userId: user._id, iss: "NODEAPI" },
+        process.env.JWT_SECRET
+      );
+      // persist the token as 't' in cookie with expiry date
+      res.cookie("t", token, { expire: new Date() + 9999 });
+      // retrun response and token to frontend client
+      return res.json({ token });
+    } else {
+      user = Object.assign(user, req.body);
+      user.updated = Date.now();
+      await user.save();
+      // generate a token with user id and secret
+      const token = jwt.sign(
+        { userId: user._id, iss: "NODEAPI" },
+        process.env.JWT_SECRET
+      );
+      // persist the token as 't' in cookie with expiry date
+      res.cookie("t", token, { expire: new Date() + 9999 });
+      // retrun response and token to frontend client
+      return res.json({ token });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send("Server error");
