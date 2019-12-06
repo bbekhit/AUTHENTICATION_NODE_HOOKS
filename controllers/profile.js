@@ -4,7 +4,7 @@ const Profile = require("../models/Profile");
 exports.getUserProfile = async (req, res) => {
   try {
     const profile = await Profile.findOne({
-      user: req.user
+      user: req.user // user is saved as a string
     }).populate("user", ["name", "email", "role"]);
 
     if (!profile) {

@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import { signinUser } from "../../actions/authActions";
 import { connect } from "react-redux";
 import { removeAlert } from "../../actions/alertActions";
+import SocialLogin from "./SocialLogin";
+import { Redirect } from "react-router-dom";
 
-const Signin = ({ signinUser, removeAlert, history }) => {
+const Signin = ({
+  signinUser,
+  removeAlert,
+  history,
+  auth: { isAuthenticated }
+}) => {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -27,10 +34,16 @@ const Signin = ({ signinUser, removeAlert, history }) => {
       history.push("/");
     }
   };
+  if (isAuthenticated) {
+    return <Redirect to="/" />;
+  }
   return (
     <div className="container">
       <div className="m-3">
         <h2 className="mt-5 mb-5">Sign In</h2>
+        <hr />
+        <SocialLogin />
+        <hr />
         <form onSubmit={onSubmit} noValidate>
           <div className="form-group">
             <label className="text-muted">Email</label>
@@ -61,4 +74,7 @@ const Signin = ({ signinUser, removeAlert, history }) => {
   );
 };
 
-export default connect(null, { signinUser, removeAlert })(Signin);
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+export default connect(mapStateToProps, { signinUser, removeAlert })(Signin);

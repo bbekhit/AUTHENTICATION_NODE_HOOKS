@@ -87,3 +87,29 @@ export const signout = history => dispatch => {
   });
   history.push("/");
 };
+
+export const socialLogin = user => async dispatch => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+  const body = JSON.stringify(user);
+  try {
+    const res = await axios.post("/api/auth/social", body, config);
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: res.data
+    });
+    dispatch(loadUser());
+  } catch (err) {
+    const error = err.response.data.error;
+    if (error) {
+      dispatch(setAlert(error, "danger"));
+    }
+    dispatch({
+      type: LOGIN_FAIL
+    });
+    return error;
+  }
+};
