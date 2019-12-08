@@ -20,7 +20,7 @@ exports.signupUser = async (req, res) => {
     if (user) {
       return res.status(400).json({ error: "User already exists" });
     }
-    user = new Use(req.body);
+    user = new User(req.body);
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     await user.save();

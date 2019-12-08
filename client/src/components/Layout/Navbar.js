@@ -8,7 +8,12 @@ const isActive = (history, path) => {
   else return { color: "#ffffff" };
 };
 
-const Navbar = ({ history, auth: { isAuthenticated, user }, signout }) => (
+const Navbar = ({
+  history,
+  auth: { isAuthenticated, user },
+  signout,
+  profile: { currentUserProfile }
+}) => (
   <div>
     <ul className="nav nav-tabs bg-primary">
       <li className="nav-item">
@@ -76,6 +81,7 @@ const Navbar = ({ history, auth: { isAuthenticated, user }, signout }) => (
 );
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  profile: state.profile
 });
 export default connect(mapStateToProps, { signout })(withRouter(Navbar));

@@ -1,21 +1,19 @@
 import React, { useState } from "react";
-import { signinUser } from "../../actions/authActions";
+import { addProfile } from "../../actions/profileActions";
 import { connect } from "react-redux";
 import { removeAlert } from "../../actions/alertActions";
-import SocialLogin from "./SocialLogin";
-import { Redirect } from "react-router-dom";
 
 const Signin = ({
-  signinUser,
+  addProfile,
   removeAlert,
   history,
-  auth: { isAuthenticated, loading }
+  auth: { isAuthenticated }
 }) => {
   const [formData, setFormData] = useState({
-    email: "",
-    password: ""
+    address: "",
+    phone: ""
   });
-  const { email, password } = formData;
+  const { address, phone } = formData;
   const onChange = e => {
     setFormData({
       ...formData,
@@ -24,45 +22,42 @@ const Signin = ({
   };
   const onSubmit = async e => {
     e.preventDefault();
-    let res = await signinUser(email, password);
+    let data = {
+      address,
+      phone
+    };
+    let res = await addProfile(data);
     if (!res) {
       setFormData({
-        name: "",
-        email: ""
+        address: "",
+        phone: ""
       });
-      removeAlert();
-      history.push("/");
+      history.push("/users");
     }
   };
-  if (isAuthenticated) {
-    return <Redirect to="/" />;
-  }
   return (
     <div className="container">
       <div className="m-3">
-        <h2 className="mt-5 mb-5">Sign In</h2>
-        <hr />
-        <SocialLogin />
-        <hr />
+        <h2 className="mt-5 mb-5">Add Profile</h2>
         <form onSubmit={onSubmit} noValidate>
           <div className="form-group">
-            <label className="text-muted">Email</label>
+            <label className="text-muted">Address</label>
             <input
               onChange={onChange}
-              type="email"
+              type="address"
               className="form-control"
-              value={email || ""}
-              name="email"
+              value={address || ""}
+              name="address"
             />
           </div>
           <div className="form-group">
-            <label className="text-muted">Password</label>
+            <label className="text-muted">Phone</label>
             <input
               onChange={onChange}
-              type="password"
+              type="phone"
               className="form-control"
-              value={password || ""}
-              name="password"
+              value={phone || ""}
+              name="phone"
             />
           </div>
           <button type="submit" className="btn btn-raised btn-primary">
@@ -75,6 +70,7 @@ const Signin = ({
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  error: state.error
 });
-export default connect(mapStateToProps, { signinUser, removeAlert })(Signin);
+export default connect(mapStateToProps, { addProfile, removeAlert })(Signin);
