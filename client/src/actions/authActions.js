@@ -5,7 +5,9 @@ import {
   REGISTER_SUCCESS,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT
+  LOGOUT,
+  GET_ERRORS,
+  CLEAR_ERRORS
 } from "./types";
 import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
@@ -68,14 +70,25 @@ export const signinUser = (email, password) => async dispatch => {
       type: LOGIN_SUCCESS,
       payload: res.data
     });
+    dispatch({
+      type: CLEAR_ERRORS
+    });
+
     dispatch(loadUser());
   } catch (err) {
     const error = err.response.data.error;
-    if (error) {
-      dispatch(setAlert(error, "danger"));
-    }
+    //   if (error) {
+    //     dispatch(setAlert(error, "danger"));
+    //   }
+    //   dispatch({
+    //     type: LOGIN_FAIL
+    //   });
+    //   return error;
+    // }
+
     dispatch({
-      type: LOGIN_FAIL
+      type: GET_ERRORS,
+      payload: error
     });
     return error;
   }

@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { signinUser } from "../../actions/authActions";
 import { connect } from "react-redux";
 import { removeAlert } from "../../actions/alertActions";
 import SocialLogin from "./SocialLogin";
 import { Redirect } from "react-router-dom";
+import { setAlert } from "../../actions/alertActions";
 
 const Signin = ({
   signinUser,
+  setAlert,
   removeAlert,
   history,
-  auth: { isAuthenticated, loading }
+  auth: { isAuthenticated, loading },
+  error
 }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
   const { email, password } = formData;
+
+  useEffect(() => {
+    if (error) {
+      setAlert(error, "danger");
+    }
+    return () => {
+      removeAlert();
+    };
+  }, [error]);
+
   const onChange = e => {
     setFormData({
       ...formData,
@@ -30,7 +43,6 @@ const Signin = ({
         name: "",
         email: ""
       });
-      removeAlert();
       history.push("/");
     }
   };
@@ -75,6 +87,9 @@ const Signin = ({
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  error: state.error
 });
-export default connect(mapStateToProps, { signinUser, removeAlert })(Signin);
+export default connect(mapStateToProps, { signinUser, removeAlert, setAlert })(
+  Signin
+);
