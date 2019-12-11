@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 // Redux
 import { Provider } from "react-redux";
 import store from "./store";
-import { loadUser } from "./actions/authActions";
+import { loadUser, signout } from "./actions/authActions";
 import setAuthToken from "./utils/setAuthToken";
 
 import "./App.css";
@@ -22,7 +22,9 @@ if (localStorage.token) {
 
 const App = () => {
   useEffect(() => {
-    store.dispatch(loadUser());
+    if (localStorage.token) {
+      store.dispatch(loadUser());
+    }
   }, []);
 
   return (

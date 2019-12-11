@@ -58,6 +58,7 @@ export const signupUser = ({ name, email, password }) => async dispatch => {
 };
 
 export const signinUser = (email, password) => async dispatch => {
+  dispatch(clearErrors());
   const config = {
     headers: {
       "Content-Type": "application/json"
@@ -70,10 +71,6 @@ export const signinUser = (email, password) => async dispatch => {
       type: LOGIN_SUCCESS,
       payload: res.data
     });
-    dispatch({
-      type: CLEAR_ERRORS
-    });
-
     dispatch(loadUser());
   } catch (err) {
     const error = err.response.data.error;
@@ -125,4 +122,10 @@ export const socialLogin = user => async dispatch => {
     });
     return error;
   }
+};
+
+export const clearErrors = () => {
+  return {
+    type: CLEAR_ERRORS
+  };
 };
